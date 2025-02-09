@@ -19,15 +19,15 @@
     "lint": "turbo run lint --continue -- --cache --cache-location .cache/.eslintcache",
     "lint:fix": "turbo run lint --continue -- --fix --cache --cache-location .cache/.eslintcache",
     "lint:ws": "pnpm dlx sherif@latest",
-    "postinstall": "pnpm lint:ws",
+    "postinstall": "pnpm lint:ws && git apply patches/@shopify-flash-list-npm-1.7.2-2a363895ca.patch  --directory=node_modules/@shopify/flash-list",
     "typecheck": "turbo run typecheck",
     "ui-add": "turbo run ui-add"
   },
   "devDependencies": {
     "@acme/prettier-config": "workspace:*",
-    "@turbo/gen": "^2.3.4",
+    "@turbo/gen": "^2.4.0",
     "prettier": "catalog:",
-    "turbo": "^2.3.4",
+    "turbo": "^2.4.0",
     "typescript": "catalog:"
   },
   "prettier": "@acme/prettier-config"
