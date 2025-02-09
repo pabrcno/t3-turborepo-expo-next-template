@@ -1,20 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Pressable, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link, Stack } from "expo-router";
 import { FlashList } from "@shopify/flash-list";
+import { verifyInstallation } from "nativewind";
 
 import type { RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 import { useSignIn, useSignOut, useUser } from "~/utils/auth";
 
-
 function PostCard(props: {
   post: RouterOutputs["post"]["all"][number];
   onDelete: () => void;
 }) {
+  console.log("post", props.post);
   return (
-    <View className="flex flex-row rounded-lg bg-muted p-4">
+    <View className="bg-green flex flex-row rounded-lg p-4">
       <View className="flex-grow">
         <Link
           asChild
@@ -23,11 +24,11 @@ function PostCard(props: {
             params: { id: props.post.id },
           }}
         >
-          <Pressable className="">
+          <Pressable className="bg-red">
             <Text className="text-xl font-semibold text-primary">
               {props.post.title}
             </Text>
-            <Text className="mt-2 text-foreground">{props.post.content}</Text>
+            <Text className="mt-2">{props.post.content}</Text>
           </Pressable>
         </Link>
       </View>
@@ -109,13 +110,14 @@ function MobileAuth() {
       <Button
         onPress={() => (user ? signOut() : signIn())}
         title={user ? "Sign Out" : "Sign In With Discord"}
-        color={"#5B65E9"}
+        color={"#FF0000"}
       />
     </>
   );
 }
 
 export default function Index() {
+  verifyInstallation();
   const utils = api.useUtils();
 
   const postQuery = api.post.all.useQuery();
@@ -124,34 +126,38 @@ export default function Index() {
     onSettled: () => utils.post.all.invalidate(),
   });
 
+  useEffect(() => {
+    console.log("postQuery.data", postQuery.data);
+  }, [postQuery.data]);
+
   return (
-    <SafeAreaView className="bg-background">
+    <SafeAreaView className="bg-white">
       {/* Changes page title visible on the header */}
-      <Stack.Screen options={{ title: "Home Page" }} />
-      <View className="h-full w-full bg-background p-4">
+      <Stack.Screen options={{ title: "HEY Page" }} />
+      <View className="h-full w-full bg-white p-4">
         <Text className="pb-2 text-center text-5xl font-bold text-foreground">
           Create <Text className="text-primary">T3</Text> Turbo
         </Text>
-
-        <MobileAuth />
 
         <View className="py-2">
           <Text className="font-semibold italic text-primary">
             Press on a post
           </Text>
         </View>
-
-        <FlashList
-          data={postQuery.data}
-          estimatedItemSize={20}
-          ItemSeparatorComponent={() => <View className="h-2" />}
-          renderItem={(p) => (
-            <PostCard
-              post={p.item}
-              onDelete={() => deletePostMutation.mutate(p.item.id)}
-            />
-          )}
-        />
+        <MobileAuth />
+        <View className="h-96 w-full">
+          <FlashList
+            data={postQuery.data}
+            estimatedItemSize={100}
+            ItemSeparatorComponent={() => <View className="h-2" />}
+            renderItem={(p) => (
+              <PostCard
+                post={p.item}
+                onDelete={() => deletePostMutation.mutate(p.item.id)}
+              />
+            )}
+          />
+        </View>
 
         <CreatePost />
       </View>

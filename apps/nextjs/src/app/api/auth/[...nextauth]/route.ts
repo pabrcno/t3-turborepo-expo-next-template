@@ -20,6 +20,7 @@ function rewriteRequestUrlInDevelopment(req: NextRequest) {
   const host = req.headers.get("host");
   const newURL = new URL(req.url);
   newURL.host = host ?? req.nextUrl.host;
+  console.log("newURL", newURL);
   return new NextRequest(newURL, req);
 }
 
